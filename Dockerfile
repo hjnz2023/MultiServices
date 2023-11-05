@@ -10,8 +10,10 @@ RUN dotnet restore
 
 # Copy the remaining source code and build the application
 COPY myservice/. ./myservice/
-WORKDIR /source/myservice
 RUN dotnet publish -c Release -o /app --no-restore
+
+# COPY ./ .
+# RUN dotnet publish -c Release -o /app
 
 # Use the official ASP.NET Core runtime image as the runtime environment
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
@@ -28,8 +30,9 @@ RUN apt-get update && apt-get install -y wget ca-certificates gnupg \
 ENV CORECLR_ENABLE_PROFILING=1 \
 CORECLR_PROFILER={36032161-FFC0-4B61-B559-F6C5D41BAE5A} \
 CORECLR_NEWRELIC_HOME=/usr/local/newrelic-dotnet-agent \
-CORECLR_PROFILER_PATH=/usr/local/newrelic-dotnet-agent/libNewRelicProfiler.so \
-NEW_RELIC_LICENSE_KEY=a5acb03c5ee63dc0e9c71196ae490958FFFFNRAL
+CORECLR_PROFILER_PATH=/usr/local/newrelic-dotnet-agent/libNewRelicProfiler.so
+
+COPY newrelic.config /usr/local/newrelic-dotnet-agent/newrelic.config
 
 WORKDIR /app
 COPY --from=build-env /app ./
