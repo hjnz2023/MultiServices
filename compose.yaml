@@ -1,0 +1,36 @@
+version: '3'
+services:
+  myservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - GIT_COMMIT_SHA=${GIT_COMMIT_SHA}
+    image: myservice
+    ports:
+      - 8000:80
+      - 8001:443
+    environment:
+      - SERVICE2_URL=http://service2/
+      - ASPNETCORE_URLS=https://+;http://+
+      - ASPNETCORE_HTTPS_PORT=8001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${ASPNETCORE_Kestrel__Certificates__Default__Password}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
+    volumes:
+      - ${HOME}/.aspnet/https:/https/
+    networks:
+      - mynetwork
+
+  service2:
+    image: service2
+    ports:
+      - 8002:80
+    environment:
+      - ASPNETCORE_URLS=http://+
+      - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
