@@ -17,7 +17,7 @@ verify_swagger:
 	st run --checks all https://localhost:8001/swagger/v1/swagger.json --report --request-tls-verify=false
 
 build_myservice:
-	docker build --rm -f Dockerfile -t myservice .
+	docker build --rm -f Dockerfile -t myservice --build-arg="GIT_COMMIT_SHA=$$(git rev-parse HEAD)" .
 
 build_service2:
-	docker build --rm -f Dockerfile.service2 -t service2 .
+	docker build --rm -f Dockerfile.service2 -t service2 --build-arg="GIT_COMMIT_SHA=$$(git rev-parse HEAD)" .

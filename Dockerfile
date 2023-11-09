@@ -15,8 +15,10 @@ RUN dotnet publish -c Release -o /app --no-restore
 
 # Use the official ASP.NET Core runtime image as the runtime environment
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
+ARG GIT_COMMIT_SHA
 
-ENV NEW_RELIC_METADATA_REPOSITORY_URL=
+ENV NEW_RELIC_METADATA_REPOSITORY_URL=https://github.com/hjnz2023/MultiServices
+ENV NEW_RELIC_METADATA_COMMIT=$GIT_COMMIT_SHA
 
 # Install the agent
 RUN apt-get update && apt-get install -y wget ca-certificates gnupg \
