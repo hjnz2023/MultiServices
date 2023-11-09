@@ -8,7 +8,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient("default", (httpClient) =>
 {
-    httpClient.BaseAddress = new Uri("http://172.17.0.3/");
+    var service2Url = Environment.GetEnvironmentVariable("SERVICE2_URL") ?? "http://service2/";
+    httpClient.BaseAddress = new Uri(service2Url);
 });
 // builder.Services.Configure<RouteHandlerOptions>(options =>
 // {
