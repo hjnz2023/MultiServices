@@ -1,5 +1,8 @@
 run_service2:
-	docker run --rm -it -p 8002:80 -e ASPNETCORE_URLS="http://+" service2
+	docker run --rm -it -p 8002:80 \
+	  -e ASPNETCORE_URLS="http://+" \
+	  -e NEW_RELIC_LICENSE_KEY=$${NEW_RELIC_LICENSE_KEY} \
+	  service2
 
 run_myservice:
 	docker run --rm -it -p 8000:80 -p 8001:443 \
