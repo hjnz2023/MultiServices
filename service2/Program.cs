@@ -24,25 +24,16 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
 app.MapGet("/weatherforecast", () =>
 {
-    if (new Random().Next(0,2) == 1) {
+    if (new Random().Next(0, 2) == 1)
+    {
         return Results.Problem("bad luck", statusCode: StatusCodes.Status429TooManyRequests);
     }
-   
+
     return Results.Ok("Sunny");
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

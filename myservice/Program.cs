@@ -27,56 +27,8 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
-if (app.Environment.IsProduction())
-{
-    app.MapGet("/search", async (CancellationToken token, IHttpClientFactory httpClientFactory) =>
-    {
-        var httpResponseMessage = await httpClientFactory.CreateClient("default").GetAsync("weatherforecast");
-
-        if (httpResponseMessage.IsSuccessStatusCode)
-        {
-            return await httpResponseMessage.Content.ReadAsStringAsync(token);
-        }
-
-        return "Nothing found";
-    }).WithName("Search").WithOpenApi();
-}
-
-app.MapGet("item/{id:int:range(1,394958)}", Results<Ok<string>, BadRequest> (int id) =>
-{
-    return TypedResults.Ok($"Item {id} found");
-}).AddEndpointFilter(async (invocationContext, next) =>
-{
-    var id = invocationContext.GetArgument<int>(0);
-    if (id == default)
-    {
-        return TypedResults.BadRequest();
-    }
-    return await next(invocationContext);
-}).WithName("GetItem").WithOpenApi(generatedOperation =>
-{
-    return generatedOperation;
-});
+app.RegisterWeatherForecastEndpoints();
+app.RegisterTestEndpoints();
 
 
 app.Run();
