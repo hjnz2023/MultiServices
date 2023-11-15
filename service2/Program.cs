@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateSlimBuilder(args);
+
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.TypeInfoResolver = new AppJsonSerializerContext();
+});
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,14 +28,14 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/weatherforecast", Results<Ok<WeatherForecast>, ProblemHttpResult>() =>
 {
     if (new Random().Next(0, 2) == 1)
     {
-        return Results.Problem("bad luck", statusCode: StatusCodes.Status429TooManyRequests);
+        return TypedResults.Problem("bad luck", statusCode: StatusCodes.Status429TooManyRequests);
     }
 
-    return Results.Ok("Sunny");
+    return TypedResults.Ok(new WeatherForecast("sunny"));
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
