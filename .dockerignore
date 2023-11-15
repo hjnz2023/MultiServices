@@ -1,5 +1,5 @@
-**/bin/
-**/obj/
+**/[b|B]in/
+**/[o|O]bj/
 .git/
 .vs/
 .dockerignore
